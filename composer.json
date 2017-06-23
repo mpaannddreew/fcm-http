@@ -1,0 +1,23 @@
+{
+    "name": "fannypack/fcm-http",
+    "description": "laravel package for fcm",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mpande Andrew",
+            "email": "andrewmvp007@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "FannyPack\\FcmHttp\\": "src/"
+        }
+    },
+    "require": {
+        "guzzlehttp/guzzle": "~6.0",
+        "illuminate/support": "5.4.*",
+        "illuminate/notifications": "5.4.*",
+        "illuminate/contracts": "5.4.*"
+    }
+}
