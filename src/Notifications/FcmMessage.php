@@ -16,6 +16,7 @@ class FcmMessage implements Arrayable, Jsonable
 {
     const PRIORITY_NORMAL = 'normal';
     const PRIORITY_HIGH = 'high';
+    const PRIORITY_NONE = '';
 
     /**
      * The title of the notification.
@@ -68,7 +69,7 @@ class FcmMessage implements Arrayable, Jsonable
      * @param string|null $collapse_key
      * @param string|null $time_to_live
      */
-    public function __construct($title = null, $message = null, $data = [], $priority = self::PRIORITY_NORMAL, $collapse_key = null, $time_to_live = null)
+    public function __construct($title = null, $message = null, $data = [], $priority = self::PRIORITY_NONE, $collapse_key = null, $time_to_live = null)
     {
         $this->title = $title;
         $this->message = $message;
@@ -115,8 +116,8 @@ class FcmMessage implements Arrayable, Jsonable
     public function notification()
     {
         $this->notification = [
-            'title' => $this->title,
-            'message' => $this->message
+            'body' => $this->message,
+            'title' => $this->title
         ];
 
         return $this;

@@ -26,7 +26,7 @@ class FcmHttpServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(FcmHttp::class, function($app){
+        $this->app->bind(FcmHttp::class, function($app){
             return new FcmHttp($app);
         });
     }

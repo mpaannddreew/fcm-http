@@ -10,6 +10,7 @@ namespace FannyPack\FcmHttp\Notifications;
 
 
 use FannyPack\FcmHttp\Http\FcmHttp;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Notifications\Notification;
 
 class FcmChannel
@@ -19,14 +20,18 @@ class FcmChannel
      */
     protected $fcmHttp;
 
+    /** @var Dispatcher */
+    protected $events;
 
     /**
      * FcmChannel constructor.
      * @param FcmHttp $fcmHttp
+     * @param Dispatcher $events
      */
-    public function __construct(FcmHttp $fcmHttp)
+    public function __construct(FcmHttp $fcmHttp, Dispatcher $events)
     {
         $this->fcmHttp = $fcmHttp;
+        $this->events = $events;
     }
 
     /**
@@ -38,31 +43,37 @@ class FcmChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        $tokens = (array) $notifiable->routeNotificationFor('fcm');
-        if (! $tokens) {
+        $registration_ids = (array) $notifiable->routeNotificationFor('fcm');
+        if (! $registration_ids) {
             return;
         }
 
         $message = $notification->toFcm($notifiable);
         
-        if ($message && $message instanceof FcmMessage::class) {
-            $packet = (new FcmPacket())
-                ->message($message)
-                ->toMany($tokens);
-            $this->sendNotification($packet);
-        }elseif($message && $message instanceof FcmPacket::class)
-        {
-            $this->sendNotification($message);
-        }else
-        {
+        if (!($message && is_a($message, FcmMessage::class))) {
             return;
         }
+
+        $packet = (new FcmPacket())
+            ->message($message)
+            ->toMany($registration_ids);
         
-        // Send notification to the $notifiable instance...
+        $this->sendNotification($packet, $notifiable, $notification);
     }
     
-    protected function sendNotification(FcmPacket $packet)
+    protected function sendNotification(FcmPacket $packet, $notifiable, $notification)
     {
         $response = $this->fcmHttp->sendMessage($packet);
+        $body = $response->getBody();
+        $contents = json_decode($body->getContents());
+        
+        if (! $contents['failure'] == 0) {
+
+        }
+
+        if (! $contents['canonical_ids'] == 0) {
+
+        }
     }
+
 }

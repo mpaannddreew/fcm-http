@@ -35,11 +35,11 @@ class FcmHttp
     protected $app;
 
     /**
-     * array of request headers
+     * array of request options
      * 
      * @var array
      */
-    protected $headers;
+    protected $options;
 
     /**
      * FCM http connection server endpoint
@@ -56,7 +56,7 @@ class FcmHttp
     {
         $this->app = $app;
         $this->apiKey = $this->getApiKey();
-        $this->headers = $this->getRequestOptions();
+        $this->options = $this->getRequestOptions();
         $this->httpClient = $this->getClient();
     }
 
@@ -67,10 +67,7 @@ class FcmHttp
      */
     protected function getClient()
     {
-        return new Client([
-            'headers' => $this->headers,
-            'verify' => false
-        ]);
+        return new Client($this->options);
     }
 
     /**
@@ -84,15 +81,18 @@ class FcmHttp
     }
 
     /**
-     * get request headers
+     * get request options
      * 
      * @return array
      */
     protected function getRequestOptions()
     {
         return [
-            'Authorization' => 'key=' . $this->apiKey,
-            'Content-Type' => 'application/json'
+            'headers' => [
+                'Authorization' => 'key=' . $this->apiKey,
+                'Content-Type' => 'application/json'
+            ],
+            'verify' => false
         ];
     }
 
@@ -104,7 +104,7 @@ class FcmHttp
      */
     public function sendMessage(FcmPacket $packet)
     {
-        $response = $this->httpClient->post(self::ENDPOINT_URL, ['form_params' => $packet->toArray()]);
+        $response = $this->httpClient->post(self::ENDPOINT_URL, ['json' => $packet->toArray()]);
 
         return $response;
     }

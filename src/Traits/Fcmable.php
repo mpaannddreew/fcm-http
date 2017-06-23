@@ -16,6 +16,6 @@ trait Fcmable
      */
     public function routeNotificationForFcm()
     {
-        return $this->fcm_target;
+        return $this->fcm_registration_id;
     }
 }

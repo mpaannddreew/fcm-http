@@ -182,6 +182,11 @@ class FcmPacket implements Arrayable, Jsonable
 
         return $this;
     }
+    
+    public function messageId()
+    {
+        return $message_id = $this->pipeline == self::XMPP_PIPELINE ? $this->message_id : null;
+    }
 
     /**
      * Get the instance as an array.
