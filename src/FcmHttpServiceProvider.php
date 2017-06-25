@@ -14,9 +14,11 @@ class FcmHttpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__.'/config/fcmhttp.php' => config_path('fcmhttp.php'),
-        ], 'fcm-http-config');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/config/fcmhttp.php' => config_path('fcmhttp.php'),
+            ], 'fcm-http-config');
+        }
     }
 
     /**

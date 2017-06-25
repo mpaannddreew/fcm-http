@@ -9,7 +9,7 @@
 namespace FannyPack\FcmHttp\Traits;
 
 
-trait Fcmable
+trait RouteForFcm
 {
     /**
      * @return mixed
