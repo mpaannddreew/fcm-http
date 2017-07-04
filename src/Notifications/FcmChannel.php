@@ -10,7 +10,6 @@ namespace FannyPack\FcmHttp\Notifications;
 
 
 use FannyPack\FcmHttp\Http\FcmHttp;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Notifications\Notification;
 
 class FcmChannel
@@ -20,18 +19,13 @@ class FcmChannel
      */
     protected $fcmHttp;
 
-    /** @var Dispatcher */
-    protected $events;
-
     /**
      * FcmChannel constructor.
      * @param FcmHttp $fcmHttp
-     * @param Dispatcher $events
      */
-    public function __construct(FcmHttp $fcmHttp, Dispatcher $events)
+    public function __construct(FcmHttp $fcmHttp)
     {
         $this->fcmHttp = $fcmHttp;
-        $this->events = $events;
     }
 
     /**
@@ -57,23 +51,7 @@ class FcmChannel
         $packet = (new FcmPacket())
             ->message($message)
             ->toMany($registration_ids);
-        
-        $this->sendNotification($packet, $notifiable, $notification);
+
+        $this->fcmHttp->sendMessage($packet);
     }
-    
-    protected function sendNotification(FcmPacket $packet, $notifiable, $notification)
-    {
-        $response = $this->fcmHttp->sendMessage($packet);
-        $body = $response->getBody();
-        $contents = json_decode($body->getContents());
-        
-        if (! $contents['failure'] == 0) {
-
-        }
-
-        if (! $contents['canonical_ids'] == 0) {
-
-        }
-    }
-
 }
