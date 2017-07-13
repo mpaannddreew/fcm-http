@@ -10,6 +10,8 @@ namespace FannyPack\FcmHttp\Notifications;
 
 
 use FannyPack\FcmHttp\Http\FcmHttp;
+use FannyPack\Utils\FcmMessage;
+use FannyPack\Utils\FcmPacket;
 use Illuminate\Notifications\Notification;
 
 class FcmChannel

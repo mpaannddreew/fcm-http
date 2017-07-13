@@ -15,6 +15,7 @@
         }
     },
     "require": {
+        "fannypack/utils": "^0.0.1",
         "guzzlehttp/guzzle": "~6.0",
         "illuminate/support": "5.4.*",
         "illuminate/notifications": "5.4.*",

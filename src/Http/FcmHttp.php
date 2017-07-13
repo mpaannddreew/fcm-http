@@ -9,7 +9,7 @@
 namespace FannyPack\FcmHttp\Http;
 
 
-use FannyPack\FcmHttp\Notifications\FcmPacket;
+use FannyPack\Utils\FcmPacket;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -55,9 +55,9 @@ class FcmHttp
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->apiKey = $this->getApiKey();
-        $this->options = $this->getRequestOptions();
-        $this->httpClient = $this->getClient();
+        $this->setApiKey();
+        $this->setRequestOptions();
+        $this->setClient();
     }
 
     /**
@@ -65,9 +65,9 @@ class FcmHttp
      * 
      * @return Client
      */
-    protected function getClient()
+    protected function setClient()
     {
-        return new Client($this->options);
+        $this->httpClient =  new Client($this->options);
     }
 
     /**
@@ -75,9 +75,13 @@ class FcmHttp
      * 
      * @return string
      */
-    protected function getApiKey()
+    protected function setApiKey()
     {
-        return $this->app['config']['fcmhttp.apiKey'];
+        $key = $this->app['config']['fcmhttp.apiKey'];
+        if (!$key)
+            throw new \InvalidArgumentException("FCM Server key not specified");
+
+        $this->apiKey =  $key;
     }
 
     /**
@@ -85,9 +89,9 @@ class FcmHttp
      * 
      * @return array
      */
-    protected function getRequestOptions()
+    protected function setRequestOptions()
     {
-        return [
+        $this->options =  [
             'headers' => [
                 'Authorization' => 'key=' . $this->apiKey,
                 'Content-Type' => 'application/json'
