@@ -6,10 +6,10 @@
  * Time: 9:39 PM
  */
 
-namespace FannyPack\FcmHttp\Http\Facades;
+namespace FannyPack\Fcm\Http\Facades;
 
 
-use FannyPack\FcmHttp\Http\FcmHttp;
+use FannyPack\Fcm\Http\Http;
 use Illuminate\Support\Facades\Facade;
 
 class Fcm extends Facade
@@ -21,6 +21,6 @@ class Fcm extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return FcmHttp::class;
+        return Http::class;
     }
 }

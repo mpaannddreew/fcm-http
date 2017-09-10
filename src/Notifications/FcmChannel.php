@@ -6,26 +6,26 @@
  * Time: 8:53 PM
  */
 
-namespace FannyPack\FcmHttp\Notifications;
+namespace FannyPack\Fcm\Http\Notifications;
 
 
-use FannyPack\FcmHttp\Http\FcmHttp;
-use FannyPack\Utils\FcmMessage;
-use FannyPack\Utils\FcmPacket;
+use FannyPack\Fcm\Http\Http;
+use FannyPack\Utils\Fcm\Messages\Payload;
+use FannyPack\Utils\Fcm\Packet;
 use Illuminate\Notifications\Notification;
 
 class FcmChannel
 {
     /**
-     * @var FcmHttp
+     * @var Http
      */
     protected $fcmHttp;
 
     /**
      * FcmChannel constructor.
-     * @param FcmHttp $fcmHttp
+     * @param Http $fcmHttp
      */
-    public function __construct(FcmHttp $fcmHttp)
+    public function __construct(Http $fcmHttp)
     {
         $this->fcmHttp = $fcmHttp;
     }
@@ -44,15 +44,15 @@ class FcmChannel
             return;
         }
 
-        $message = $notification->toFcm($notifiable);
+        $payload = $notification->toFcm($notifiable);
         
-        if (!($message && is_a($message, FcmMessage::class))) {
+        if (!($payload && is_a($payload, Payload::class))) {
             return;
         }
 
-        $packet = (new FcmPacket())
-            ->message($message)
-            ->toMany($registration_ids);
+        $packet = (new Packet())
+            ->setPayload($payload)
+            ->setRegistrationIds($registration_ids);
 
         $this->fcmHttp->sendMessage($packet);
     }

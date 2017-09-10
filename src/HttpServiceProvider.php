@@ -1,11 +1,10 @@
 <?php
 
-namespace FannyPack\FcmHttp;
+namespace FannyPack\Fcm\Http;
 
-use FannyPack\FcmHttp\Http\FcmHttp;
 use Illuminate\Support\ServiceProvider;
 
-class FcmHttpServiceProvider extends ServiceProvider
+class HttpServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -28,13 +27,13 @@ class FcmHttpServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(FcmHttp::class, function($app){
-            return new FcmHttp($app);
+        $this->app->bind(Http::class, function($app){
+            return new Http($app);
         });
     }
 
     public function provides()
     {
-        return [FcmHttp::class];
+        return [Http::class];
     }
 }

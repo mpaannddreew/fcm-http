@@ -6,14 +6,14 @@
  * Time: 4:47 PM
  */
 
-namespace FannyPack\FcmHttp\Http;
+namespace FannyPack\Fcm\Http;
 
 
-use FannyPack\Utils\FcmPacket;
+use FannyPack\Utils\Fcm\Packet;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Foundation\Application;
 
-class FcmHttp
+class Http
 {
     /**
      * http client
@@ -49,7 +49,7 @@ class FcmHttp
     const ENDPOINT_URL = "https://fcm.googleapis.com/fcm/send";
 
     /**
-     * FcmHttp constructor.
+     * Http constructor.
      * @param Application $app
      */
     public function __construct(Application $app)
@@ -63,7 +63,7 @@ class FcmHttp
     /**
      * create http client
      * 
-     * @return Client
+     * @return void
      */
     protected function setClient()
     {
@@ -73,7 +73,7 @@ class FcmHttp
     /**
      * get FCM server key
      * 
-     * @return string
+     * @return void
      */
     protected function setApiKey()
     {
@@ -87,7 +87,7 @@ class FcmHttp
     /**
      * get request options
      * 
-     * @return array
+     * @return void
      */
     protected function setRequestOptions()
     {
@@ -103,11 +103,14 @@ class FcmHttp
     /**
      * send message to FCM
      * 
-     * @param FcmPacket $packet
+     * @param Packet $packet
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function sendMessage(FcmPacket $packet)
+    public function sendMessage(Packet $packet)
     {
+        if ($packet->getPipeline() != Packet::HTTP_PIPELINE)
+            throw new \InvalidArgumentException('Packet should be of http pipeline');
+
         $response = $this->httpClient->post(self::ENDPOINT_URL, ['json' => $packet->toArray()]);
 
         return $response;

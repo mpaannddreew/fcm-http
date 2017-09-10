@@ -6,7 +6,7 @@
  * Time: 8:46 PM
  */
 
-namespace FannyPack\FcmHttp\Traits;
+namespace FannyPack\Fcm\Http\Traits;
 
 
 trait RouteForFcm
