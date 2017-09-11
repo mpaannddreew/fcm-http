@@ -13,7 +13,7 @@ use FannyPack\Utils\Fcm\Packet;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Foundation\Application;
 
-class Http
+class HttpClient
 {
     /**
      * http client

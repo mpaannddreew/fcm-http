@@ -27,13 +27,13 @@ class HttpServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Http::class, function($app){
-            return new Http($app);
+        $this->app->bind(HttpClient::class, function($app){
+            return new HttpClient($app);
         });
     }
 
     public function provides()
     {
-        return [Http::class];
+        return [HttpClient::class];
     }
 }

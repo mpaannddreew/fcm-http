@@ -9,7 +9,7 @@
 namespace FannyPack\Fcm\Http\Facades;
 
 
-use FannyPack\Fcm\Http\Http;
+use FannyPack\Fcm\Http\HttpClient;
 use Illuminate\Support\Facades\Facade;
 
 class Fcm extends Facade
@@ -21,6 +21,6 @@ class Fcm extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return Http::class;
+        return HttpClient::class;
     }
 }

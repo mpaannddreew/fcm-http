@@ -9,7 +9,7 @@
 namespace FannyPack\Fcm\Http\Notifications;
 
 
-use FannyPack\Fcm\Http\Http;
+use FannyPack\Fcm\Http\HttpClient;
 use FannyPack\Utils\Fcm\Messages\Payload;
 use FannyPack\Utils\Fcm\Packet;
 use Illuminate\Notifications\Notification;
@@ -17,15 +17,15 @@ use Illuminate\Notifications\Notification;
 class FcmChannel
 {
     /**
-     * @var Http
+     * @var HttpClient
      */
     protected $fcmHttp;
 
     /**
      * FcmChannel constructor.
-     * @param Http $fcmHttp
+     * @param HttpClient $fcmHttp
      */
-    public function __construct(Http $fcmHttp)
+    public function __construct(HttpClient $fcmHttp)
     {
         $this->fcmHttp = $fcmHttp;
     }
