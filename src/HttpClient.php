@@ -9,9 +9,15 @@
 namespace FannyPack\Fcm\Http;
 
 
+use FannyPack\Utils\Fcm\Events\RegistrationErrorEvent;
+use FannyPack\Utils\Fcm\Events\RegistrationExpiryEvent;
+use FannyPack\Utils\Fcm\Events\UnavailableErrorEvent;
 use FannyPack\Utils\Fcm\Packet;
+use FannyPack\Utils\Fcm\Response;
 use GuzzleHttp\Client;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
+use Psr\Http\Message\ResponseInterface;
 
 class HttpClient
 {
@@ -49,12 +55,18 @@ class HttpClient
     const ENDPOINT_URL = "https://fcm.googleapis.com/fcm/send";
 
     /**
+     * @var Dispatcher
+     */
+    protected $events;
+
+    /**
      * Http constructor.
      * @param Application $app
      */
     public function __construct(Application $app)
     {
         $this->app = $app;
+        $this->events = $this->app['events'];
         $this->setApiKey();
         $this->setRequestOptions();
         $this->setClient();
@@ -102,9 +114,8 @@ class HttpClient
 
     /**
      * send message to FCM
-     * 
+     *
      * @param Packet $packet
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function sendMessage(Packet $packet)
     {
@@ -112,7 +123,49 @@ class HttpClient
             throw new \InvalidArgumentException('Packet should be of http pipeline');
 
         $response = $this->httpClient->post(self::ENDPOINT_URL, ['json' => $packet->toArray()]);
+        $this->processResponse($response, $packet);
+    }
 
-        return $response;
+    /**
+     * @param ResponseInterface $response
+     * @param Packet $packet
+     */
+    protected function processResponse(ResponseInterface $response, Packet $packet)
+    {
+        $registrationIds = $packet->getRegistrationIds();
+        $response = new Response($response);
+        if ($response->getFailure() != 0 || $response->getCanonicalIds() != 0)
+        {
+            $results = $response->getResults();
+            foreach ($results as $key => $result)
+            {
+                $old_registration_id = $registrationIds[$key];
+                if (isset($result['message_id'])) {
+                    if (isset($result['registration_id'])) {
+                        // fcm registration id expired
+                        $new_registration_id = $result['registration_id'];
+                        $this->events->fire(new RegistrationExpiryEvent($old_registration_id, $new_registration_id));
+                    };
+                }
+
+                if (isset($result['error'])) {
+                    switch ($result['error']){
+                        case 'Unavailable':
+                            $this->events->fire(new UnavailableErrorEvent($old_registration_id, $packet));
+                            break;
+                        case 'InvalidRegistration':
+                            // app uninstalled by user
+                            $this->events->fire(new RegistrationErrorEvent($old_registration_id));
+                            break;
+                        case 'NotRegistered':
+                            // app uninstalled by user
+                            $this->events->fire(new RegistrationErrorEvent($old_registration_id));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
 }
