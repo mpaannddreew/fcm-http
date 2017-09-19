@@ -9,9 +9,9 @@
 namespace FannyPack\Fcm\Http;
 
 
-use FannyPack\Utils\Fcm\Events\RegistrationErrorEvent;
-use FannyPack\Utils\Fcm\Events\RegistrationExpiryEvent;
-use FannyPack\Utils\Fcm\Events\UnavailableErrorEvent;
+use FannyPack\Utils\Fcm\Events\InvalidDeviceRegistration;
+use FannyPack\Utils\Fcm\Events\RegistrationExpired;
+use FannyPack\Utils\Fcm\Events\UnavailableError;
 use FannyPack\Utils\Fcm\Packet;
 use FannyPack\Utils\Fcm\Response;
 use GuzzleHttp\Client;
@@ -144,22 +144,22 @@ class HttpClient
                     if (isset($result['registration_id'])) {
                         // fcm registration id expired
                         $new_registration_id = $result['registration_id'];
-                        $this->events->fire(new RegistrationExpiryEvent($old_registration_id, $new_registration_id));
+                        $this->events->fire(new RegistrationExpired($old_registration_id, $new_registration_id));
                     };
                 }
 
                 if (isset($result['error'])) {
                     switch ($result['error']){
                         case 'Unavailable':
-                            $this->events->fire(new UnavailableErrorEvent($old_registration_id, $packet));
+                            $this->events->fire(new UnavailableError($old_registration_id, $packet));
                             break;
                         case 'InvalidRegistration':
                             // app uninstalled by user
-                            $this->events->fire(new RegistrationErrorEvent($old_registration_id));
+                            $this->events->fire(new InvalidDeviceRegistration($old_registration_id));
                             break;
                         case 'NotRegistered':
                             // app uninstalled by user
-                            $this->events->fire(new RegistrationErrorEvent($old_registration_id));
+                            $this->events->fire(new InvalidDeviceRegistration($old_registration_id));
                             break;
                         default:
                             break;
