@@ -7,5 +7,5 @@
  */
 
 return [
-    'apiKey' => env('FCM_SERVER_KEY', '')
+    'apiKey' => env('FCM_SERVER_KEY', 'Your api key')
 ];
