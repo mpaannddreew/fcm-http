@@ -46,7 +46,7 @@ class FcmChannel
 
         $payload = $notification->toFcm($notifiable);
         
-        if (!($payload && is_a($payload, Payload::class))) {
+        if (!($payload && (get_class($payload) == Payload::class))) {
             return;
         }
 
