@@ -9,6 +9,8 @@
 namespace FannyPack\Fcm\Http;
 
 
+use FannyPack\Utils\Fcm\Events\AbstractError;
+use FannyPack\Utils\Fcm\Events\DeviceMessageRateExceeded;
 use FannyPack\Utils\Fcm\Events\InvalidDeviceRegistration;
 use FannyPack\Utils\Fcm\Events\RegistrationExpired;
 use FannyPack\Utils\Fcm\Events\UnavailableError;
@@ -161,7 +163,13 @@ class HttpClient
                             // app uninstalled by user
                             $this->events->fire(new InvalidDeviceRegistration($old_registration_id));
                             break;
+                        case 'DeviceMessageRateExceeded':
+                            // device rate exceeded
+                            $this->events->fire(new DeviceMessageRateExceeded($old_registration_id, $packet));
+                            break;
                         default:
+                            // unknown error
+                            $this->events->fire(new AbstractError($result['error'], $old_registration_id));
                             break;
                     }
                 }
