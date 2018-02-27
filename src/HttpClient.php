@@ -14,7 +14,7 @@ use FannyPack\Utils\Fcm\Events\DeviceMessageRateExceeded;
 use FannyPack\Utils\Fcm\Events\InvalidDeviceRegistration;
 use FannyPack\Utils\Fcm\Events\RegistrationExpired;
 use FannyPack\Utils\Fcm\Events\UnavailableError;
-use FannyPack\Utils\Fcm\Packet;
+use FannyPack\Utils\Fcm\HttpPacket;
 use FannyPack\Utils\Fcm\Response;
 use GuzzleHttp\Client;
 use Illuminate\Events\Dispatcher;
@@ -117,22 +117,19 @@ class HttpClient
     /**
      * send message to FCM
      *
-     * @param Packet $packet
+     * @param HttpPacket $packet
      */
-    public function sendMessage(Packet $packet)
+    public function sendMessage(HttpPacket $packet)
     {
-        if ($packet->getPipeline() != Packet::HTTP_PIPELINE)
-            throw new \InvalidArgumentException('Packet should be of http pipeline');
-
         $response = $this->httpClient->post(self::ENDPOINT_URL, ['json' => $packet->toArray()]);
         $this->processResponse($response, $packet);
     }
 
     /**
      * @param ResponseInterface $response
-     * @param Packet $packet
+     * @param HttpPacket $packet
      */
-    protected function processResponse(ResponseInterface $response, Packet $packet)
+    protected function processResponse(ResponseInterface $response, HttpPacket $packet)
     {
         $registrationIds = $packet->getRegistrationIds();
         $response = new Response($response);

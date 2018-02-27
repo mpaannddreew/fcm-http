@@ -11,7 +11,7 @@ namespace FannyPack\Fcm\Http\Notifications;
 
 use FannyPack\Fcm\Http\HttpClient;
 use FannyPack\Utils\Fcm\Messages\Payload;
-use FannyPack\Utils\Fcm\Packet;
+use FannyPack\Utils\Fcm\HttpPacket;
 use Illuminate\Notifications\Notification;
 
 class FcmChannel
@@ -50,7 +50,7 @@ class FcmChannel
             return;
         }
 
-        $packet = (new Packet())
+        $packet = (new HttpPacket())
             ->setPayload($payload)
             ->setRegistrationIds($registration_ids);
 
